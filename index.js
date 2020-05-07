@@ -43,8 +43,6 @@ server.get("/api/users/:id", (req, res) => {
 // POST
 server.post("/api/users", (req, res) => {
   const userInfo = req.body;
-  console.log("userInfo", userInfo);
-
   userInfo.id = shortid.generate();
 
   if (!userInfo.bio || !userInfo.name) {
@@ -53,7 +51,7 @@ server.post("/api/users", (req, res) => {
       .json({ errorMessage: "Please provide name and bio for the user." });
   } else {
     usersArr.push(userInfo);
-    res.status(201).json(userInfo);
+    res.status(201).json(usersArr);
   }
 });
 
@@ -69,6 +67,28 @@ server.delete("/api/users/:id", (req, res) => {
     res
       .status(404)
       .json({ errorMessage: "The user with the specified ID does not exist." });
+  }
+});
+
+// PUT
+server.put("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  const index = usersArr.findIndex(user => user.id === id);
+
+  if (index === -1) {
+    res
+      .status(404)
+      .json({ message: "The user with the specified ID does not exist." });
+  } else if (!changes.name || !changes.bio) {
+    res
+      .status(400)
+      .json({ errorMessage: "Please provide name and bio for the user." });
+  } else {
+    changes.id = id;
+    usersArr[index] = changes;
+    res.status(200).json(usersArr);
   }
 });
 
