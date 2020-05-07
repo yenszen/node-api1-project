@@ -4,7 +4,7 @@ const shortid = require("shortid");
 const server = express();
 server.use(express.json());
 
-const usersArr = [
+let usersArr = [
   {
     id: shortid.generate(),
     name: "Jane Doe",
@@ -57,6 +57,22 @@ server.post("/api/users", (req, res) => {
   }
 });
 
+// DELETE
+server.delete("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const userToDel = usersArr.find(user => user.id === id);
+
+  if (userToDel) {
+    usersArr = usersArr.filter(user => user.id !== id);
+    res.status(200).json(userToDel);
+  } else {
+    res
+      .status(404)
+      .json({ errorMessage: "The user with the specified ID does not exist." });
+  }
+});
+
+// Listen to PORT
 const port = 5000;
 
 server.listen(port, () => {
