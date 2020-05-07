@@ -92,6 +92,23 @@ server.put("/api/users/:id", (req, res) => {
   }
 });
 
+// PATCH
+server.patch("/api/users/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+
+  const userToUpdate = usersArr.find(user => user.id === id);
+
+  if (userToUpdate) {
+    Object.assign(userToUpdate, changes);
+    res.status(200).json(usersArr);
+  } else {
+    res
+      .status(404)
+      .json({ errorMessage: "The user with the specified ID does not exist." });
+  }
+});
+
 // Listen to PORT
 const port = 5000;
 
